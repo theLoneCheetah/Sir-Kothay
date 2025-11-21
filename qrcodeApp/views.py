@@ -16,6 +16,12 @@ import os
 
 from dashboard.models import UserDetails
 
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image as RLImage, Table, TableStyle
+from reportlab.lib import colors
+from reportlab.lib.units import inch
+
 
 @login_required(login_url='login')
 def generate_qr_code_with_logo(request):
@@ -99,4 +105,64 @@ def download_qr_code(request):
     response['Content-Type'] = 'application/octet-stream'  # Ensures it's always downloaded
     response['Content-Disposition'] = 'attachment; filename="qr_code.png"'
 
+    return response
+
+@login_required(login_url='login')
+def download_qr_with_info(request):
+    # Get user details
+    user_details = get_object_or_404(UserDetails, user=request.user)
+    qr_code = get_object_or_404(QRCode, user=request.user)
+
+    # Create PDF buffer
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    styles = getSampleStyleSheet()
+    story = []
+
+    # Title
+    title = Paragraph("Scan the QR Code", styles['Title'])
+    story.append(title)
+    story.append(Spacer(1, 12))
+
+    # Load images
+    profile_img_path = user_details.profile_image.path if user_details.profile_image and os.path.exists(user_details.profile_image.path) else None
+    qr_img_path = qr_code.image.path
+
+    # Left side: profile image and info
+    left_flowables = []
+    if profile_img_path:
+        left_flowables.append(RLImage(profile_img_path, width=2*inch, height=2*inch))
+        left_flowables.append(Spacer(1, 12))
+    info_text = f"<b>Name:</b> {request.user.get_full_name() or request.user.username}<br/>" \
+                f"<b>Email:</b> {request.user.email}<br/>" \
+                f"<b>Phone:</b> {user_details.phone_number}<br/>" \
+                f"<b>Organization:</b> {user_details.organization}<br/>" \
+                f"<b>Designation:</b> {user_details.designation}<br/>" \
+                f"<b>Bio:</b> {user_details.bio}"
+    left_flowables.append(Paragraph(info_text, styles['Normal']))
+
+    # Right side: QR code
+    right_flowables = []
+    right_flowables.append(RLImage(qr_img_path, width=2.75*inch, height=2.75*inch))
+    right_flowables.append(Spacer(1, 12))
+    right_flowables.append(Paragraph("Scan the QR code to view broadcast messages.", styles['Normal']))
+
+    # Create table
+    data = [
+        [left_flowables, right_flowables]
+    ]
+
+    table = Table(data, colWidths=[3*inch, 3*inch])
+    table.setStyle(TableStyle([
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ]))
+
+    story.append(table)
+
+    doc.build(story)
+    buffer.seek(0)
+
+    response = FileResponse(buffer, as_attachment=True, filename='info_with_qr.pdf')
     return response
