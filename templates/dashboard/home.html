@@ -47,8 +47,9 @@
                     <a href="{% url 'generate_qr' %}"
                         class="bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-green-700 shadow-md transition-all">Generate</a>
                     {% endif %}
-                    <!-- <button onclick="openModal('editProfileModal')"
-                        class="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-4 py-2 rounded-lg hover:from-purple-600 hover:to-purple-700 shadow-md transition-all">Edit</button> -->
+                    <a href="{% url 'show_broadcast_messages' userd.slug %}"
+                        class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg hover:from-blue-600 hover:to-blue-700 shadow-md transition-all">Broadcast</a>
+                    
                 </div>
             </div>
         </div>
@@ -83,12 +84,6 @@
             You have no messages.
         </div>
         {% endif %}
-<!-- Floating Broadcast Button -->
-        <a href="{% url 'show_broadcast_messages' userd.slug %}"
-            class="fixed bottom-4 right-32 sm:bottom-8 sm:right-40 bg-red-600 text-white px-5 py-3 rounded-full shadow-lg hover:bg-red-700 flex items-center space-x-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
-            <span>Broadcast</span>
-        </a>
         <!-- Floating Add Button -->
         <button onclick="openModal('addMessageModal')"
             class="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 bg-blue-600 text-white px-5 py-3 rounded-full shadow-lg hover:bg-blue-700">
