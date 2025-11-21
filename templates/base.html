@@ -145,7 +145,17 @@
               <i class="bi bi-facebook"></i>
             </a>
           </div>
-          <p class="mt-6 text-sm">© 2025 Sir Kothay. Made with love by <a href="https://github.com/UIU-Developers-Hub" class="text-green-400 hover:underline">UIU Developers Hub</a></p>
+          <div class="flex items-center gap-2 mt-6 text-sm">
+            <img src="https://github.com/UIU-Developers-Hub.png" class="h-8 w-8 rounded-full" alt="UIU Developers Hub">
+            <span>© 2025 Sir Kothay. Made with ❤️ by <a href="https://github.com/UIU-Developers-Hub" class="text-green-400 hover:underline">UIU Developers Hub</a></span>
+          </div>
+          <div class="flex gap-2 mt-2">
+            {% for contributor in contributors %}
+            <a href="{{ contributor.profileUrl }}" target="_blank">
+              <img src="{{ contributor.imageUrl }}" class="h-8 w-8 rounded-full" alt="Contributor">
+            </a>
+            {% endfor %}
+          </div>
         </div>
       </div>
     </div>

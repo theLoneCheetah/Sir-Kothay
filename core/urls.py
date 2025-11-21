@@ -35,7 +35,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', redirect_authenticated_user, name='index'),
     path('index/', views.index_view, name='index_page'),
-    path('about/', TemplateView.as_view(template_name='about.html'), name='about'),
+    path('about/', views.about_view, name='about'),
     path('auth/', include('authApp.urls')),
     path('dashboard/', include('dashboard.urls')),
     path('broadcast/', include('broadcast.urls')),
