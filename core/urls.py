@@ -27,11 +27,14 @@ from django.shortcuts import redirect
 def redirect_authenticated_user(request):
     if request.user.is_authenticated:
         return redirect('home')
-    return redirect('about')
+    return redirect('index_page')
+
+from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', redirect_authenticated_user, name='index'),
+    path('index/', views.index_view, name='index_page'),
     path('about/', TemplateView.as_view(template_name='about.html'), name='about'),
     path('auth/', include('authApp.urls')),
     path('dashboard/', include('dashboard.urls')),
