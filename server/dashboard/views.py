@@ -10,40 +10,26 @@ from django.contrib import messages
 # Create your views here.
 @login_required(login_url='login')
 def home_view(request):
-    user = user=request.user
-    messages = BroadcastMessage.objects.all().filter(user=user)
-    userd, created = UserDetails.objects.get_or_create(user=user, defaults={'phone_number': '', 'bio': '', 'designation': '', 'organization': ''})
-    
-    try:
-        qrcode = QRCode.objects.get(user=user)
-    except QRCode.DoesNotExist:
-        qrcode = None
-    
-    return render(request, 'dashboard/home.html', {
-        'messages': messages,
-        'userd': userd,
-        'qrcode': qrcode,
-        'username': user.username.replace('_', ' ')
-    })
+    # This view is deprecated - use API endpoints instead
+    from django.http import JsonResponse
+    return JsonResponse({
+        'message': 'Dashboard view has moved to frontend',
+        'api_endpoints': {
+            'dashboard': '/api/dashboard/',
+            'user_details': '/api/dashboard/user-details/',
+            'qrcodes': '/api/qrcode/',
+            'messages': '/api/broadcast/'
+        }
+    }, status=200)
 
 @login_required(login_url='login')
 def profile_view(request):
-    user = request.user
-    userd, created = UserDetails.objects.get_or_create(user=user, defaults={'phone_number': '', 'bio': '', 'designation': '', 'organization': ''})
-    messages = BroadcastMessage.objects.filter(user=user)
-    
-    try:
-        qrcode = QRCode.objects.get(user=user)
-    except QRCode.DoesNotExist:
-        qrcode = None
-    
-    return render(request, 'dashboard/profile.html', {
-        'user': user,
-        'userd': userd,
-        'messages': messages,
-        'qrcode': qrcode,
-        'username': user.username.replace('_', ' ')
-    })
+    # This view is deprecated - use API endpoints instead
+    from django.http import JsonResponse
+    return JsonResponse({
+        'message': 'Profile view has moved to frontend',
+        'api_endpoint': '/api/auth/users/profile/'
+    }, status=200)
 
 @login_required(login_url='login')
 def user_detail_view(request):

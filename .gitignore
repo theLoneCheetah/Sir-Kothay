@@ -218,6 +218,30 @@ __marimo__/
 # Django
 media/
 staticfiles/
+*.sqlite3
+db.sqlite3
 
+# IDE
 .idea/
 .vscode/
+*.swp
+*.swo
+*~
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python virtual environment
+hello/
+venv/
+env/
+
+# Deployment
+deploy.sh
+*.log

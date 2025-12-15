@@ -467,9 +467,50 @@ curl -X DELETE http://127.0.0.1:8000/api/broadcast/messages/4/ \
 
 ---
 
+## Public Broadcast Endpoint
+
+### 16. Get User Broadcast Information (Public)
+**GET** `/api/broadcast/<user_slug>/`
+
+**Authentication:** Not required (Public endpoint)
+
+**Description:** This public endpoint returns user profile information and their active broadcast message. It's used for public broadcast pages and QR code scanning. No authentication is required.
+
+**Response:**
+```json
+{
+  "username": "MD_IRFAN_HASAN_FAHIM",
+  "user_username": "MD_IRFAN_HASAN_FAHIM",
+  "email": "fahimimran0088@gmail.com",
+  "user_email": "fahimimran0088@gmail.com",
+  "phone_number": "+8801580356046",
+  "organization": "Tech Company",
+  "designation": "Senior Software Engineer",
+  "bio": "Product-focused developer...",
+  "profile_image": "/media/profile_images/MD_IRFAN_HASAN_FAHIM_300_x_300_px.jpg",
+  "active_message": "This is my active broadcast message",
+  "slug": "MD_IRFAN_HASAN_FAHIM-None"
+}
+```
+
+**Error Response (404):**
+```json
+{
+  "error": "User not found",
+  "message": "No user found with slug: username-slug"
+}
+```
+
+**cURL Example:**
+```bash
+curl -X GET http://127.0.0.1:8000/api/broadcast/MD_IRFAN_HASAN_FAHIM-None/
+```
+
+---
+
 ## QR Code Endpoints
 
-### 16. Get My QR Code
+### 17. Get My QR Code
 **GET** `/api/qrcode/qrcodes/my_qrcode/`
 
 **Headers:**
@@ -496,7 +537,7 @@ curl -X GET http://127.0.0.1:8000/api/qrcode/qrcodes/my_qrcode/ \
 
 ---
 
-### 17. Generate QR Code
+### 18. Generate QR Code
 **POST** `/api/qrcode/qrcodes/generate/`
 
 **Headers:**
@@ -526,7 +567,7 @@ curl -X POST http://127.0.0.1:8000/api/qrcode/qrcodes/generate/ \
 
 ---
 
-### 18. List All QR Codes (Paginated)
+### 19. List All QR Codes (Paginated)
 **GET** `/api/qrcode/qrcodes/`
 
 **Headers:**

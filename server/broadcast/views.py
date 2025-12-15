@@ -6,18 +6,19 @@ from dashboard.models import UserDetails
 from django.contrib.auth.decorators import login_required
 
 def show_broadcast_messages(request, user_slug):
+    # Return JSON response instead of rendering template
+    from django.http import JsonResponse
     userd = get_object_or_404(UserDetails, _slug=user_slug)
     user = userd.user
     active_message = user.messages.filter(active=True).first()
     
-    context = {
-        'user': user,
+    return JsonResponse({
         'username': user.username.replace('_', ' '),
-        'userd': userd,
-        'active_messages': active_message
-    }
-    
-    return render(request, 'broadcast/message.html', context=context)
+        'slug': user_slug,
+        'message': active_message.message if active_message else None,
+        'active': active_message.active if active_message else False,
+        'created_at': active_message.created_at.isoformat() if active_message else None
+    }, status=200)
 
 # Create your views here.
 @login_required(login_url='login')

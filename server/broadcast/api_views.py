@@ -1,15 +1,13 @@
 from rest_framework import viewsets, status
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import BroadcastMessage
 from .serializers import BroadcastMessageSerializer
+from dashboard.models import UserDetails
 
 
 class BroadcastMessageViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint for broadcast messages management
-    """
     queryset = BroadcastMessage.objects.all()
     serializer_class = BroadcastMessageSerializer
     permission_classes = [IsAuthenticated]
@@ -51,3 +49,44 @@ class BroadcastMessageViewSet(viewsets.ModelViewSet):
         message.active = True
         message.save()
         return Response({'message': 'Message set as active'})
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny]) 
+def get_user_broadcast(request, user_slug):
+    try:
+        user_details = UserDetails.objects.select_related('user').get(_slug=user_slug)
+        
+        # Get active broadcast message if exists
+        active_message = BroadcastMessage.objects.filter(
+            user=user_details.user,
+            active=True
+        ).first()
+        
+        # Build response with user details and active message
+        response_data = {
+            'username': user_details.user.username,
+            'user_username': user_details.user.username,
+            'email': user_details.user.email,
+            'user_email': user_details.user.email,
+            'phone_number': user_details.phone_number or '',
+            'organization': user_details.organization or '',
+            'designation': user_details.designation or '',
+            'bio': user_details.bio or '',
+            'profile_image': user_details.profile_image.url if user_details.profile_image else None,
+            'active_message': active_message.message if active_message else None,
+            'slug': user_details.slug
+        }
+        
+        return Response(response_data, status=status.HTTP_200_OK)
+        
+    except UserDetails.DoesNotExist:
+        return Response({
+            'error': 'User not found',
+            'message': f'No user found with slug: {user_slug}'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({
+            'error': 'Server error',
+            'message': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

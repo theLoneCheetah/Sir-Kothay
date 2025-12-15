@@ -50,9 +50,27 @@ def fetch_contributors():
     return contributors
 
 def index_view(request):
-    contributors = fetch_contributors()
-    return render(request, 'index.html', {'contributors': contributors})
+    # Frontend is now separate - redirect or return API info
+    from django.http import JsonResponse
+    return JsonResponse({
+        'message': 'Sir Kothay API Server',
+        'version': '1.0',
+        'documentation': '/api/',
+        'endpoints': {
+            'auth': '/api/auth/',
+            'dashboard': '/api/dashboard/',
+            'qrcode': '/api/qrcode/',
+            'broadcast': '/api/broadcast/'
+        }
+    }, status=200)
 
 def about_view(request):
+    # Return contributors as JSON
+    from django.http import JsonResponse
     contributors = fetch_contributors()
-    return render(request, 'about.html', {'contributors': contributors})
+    return JsonResponse({
+        'project': 'Sir Kothay',
+        'description': 'Leave notes when you\'re away',
+        'repository': 'https://github.com/UIU-Developers-Hub/Sir-Kothay',
+        'contributors': contributors
+    }, status=200)
