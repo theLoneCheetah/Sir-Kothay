@@ -40,4 +40,10 @@ urlpatterns = [
     path('dashboard/', include('dashboard.urls')),
     path('broadcast/', include('broadcast.urls')),
     path('qrcode/', include('qrcodeApp.urls')),
+    
+    # API endpoints
+    path('api/auth/', include('authApp.api_urls')),
+    path('api/dashboard/', include('dashboard.api_urls')),
+    path('api/broadcast/', include('broadcast.api_urls')),
+    path('api/qrcode/', include('qrcodeApp.api_urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
