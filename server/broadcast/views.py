@@ -1,0 +1,69 @@
+from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.contrib import messages
+from django.shortcuts import get_object_or_404
+from dashboard.models import UserDetails
+from django.contrib.auth.decorators import login_required
+
+def show_broadcast_messages(request, user_slug):
+    # Return JSON response instead of rendering template
+    from django.http import JsonResponse
+    userd = get_object_or_404(UserDetails, _slug=user_slug)
+    user = userd.user
+    active_message = user.messages.filter(active=True).first()
+    
+    return JsonResponse({
+        'username': user.username.replace('_', ' '),
+        'slug': user_slug,
+        'message': active_message.message if active_message else None,
+        'active': active_message.active if active_message else False,
+        'created_at': active_message.created_at.isoformat() if active_message else None
+    }, status=200)
+
+# Create your views here.
+@login_required(login_url='login')
+def add_broadcast_message(request):
+    if request.method == 'POST':
+        message = request.POST.get('message')
+        if message:
+            request.user.messages.create(message=message)
+            messages.success(request, 'Message added successfully.')
+        else:
+            messages.error(request, 'Message cannot be empty.')
+    
+    return redirect(reverse('home'))
+
+@login_required(login_url='login')
+def delete_broadcast_message(request, message_id):
+    message = request.user.messages.filter(id=message_id).first()
+    if message:
+        message.delete()
+        messages.success(request, 'Message deleted successfully.')
+    else:
+        messages.error(request, 'Message not found.')
+    
+    return redirect(reverse('home'))
+
+@login_required(login_url='login')
+def update_broadcast_message(request, message_id):
+    message = request.user.messages.filter(id=message_id).first()
+    if message:
+        message.message = request.POST.get('message')
+        message.save()
+        messages.success(request, 'Message updated successfully.')
+    else:
+        messages.error(request, 'Message not found.')
+    
+    return redirect(reverse('home'))
+
+@login_required(login_url='login')
+def toggle_broadcast_message(request, message_id):
+    message = request.user.messages.filter(id=message_id).first()
+    if message:
+        message.active = not message.active
+        message.save()
+        messages.success(request, 'Message toggled successfully.')
+    else:
+        messages.error(request, 'Message not found.')
+    
+    return redirect(reverse('home'))
