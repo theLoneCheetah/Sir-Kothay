@@ -24,7 +24,7 @@ def user_registration_and_login(p: Playwright, get_screenshot: bool = False) -> 
     user = generate_test_user()
 
     # chromium session with windows to see
-    browser = p.chromium.launch(headless=False, slow_mo=0)
+    browser = p.chromium.launch(headless=False, slow_mo=500)
 
     # new page
     page = browser.new_page()
